@@ -1,5 +1,9 @@
 const inquirer = require('inquirer');
-const fs = require('fs');
+// Don't need because the file system functions are in separate file
+// const fs = require('fs');
+// This way we would write generateSite.writeFile() and generateSite.copyFile() 
+// generateSite = require('./utils/generate-site.js');
+const { writeFile, copyFile } = require('./utils/generate-site.js');
 const generatePage = require('./src/page-template.js');
 
 const promptUser = () => {
@@ -175,17 +179,39 @@ const mockData = {
 	]
 };
 
-const pageHTML = generatePage(mockData);
-	fs.writeFile('./index.html', pageHTML, err => {
-  if (err) throw new Error(err);
-});
-// promptUser()
-// 	.then(promptProject)
-// 	.then(portfolioData => {
-//     const pageHTML = generatePage(portfolioData);
-// 
-//     fs.writeFile('./index.html', pageHTML, err => {
-//       if (err) throw new Error(err);
-// 
-//     });
+// const pageHTML = generatePage(mockData);
+// fs.writeFile('./dist/index.html', pageHTML, err => {
+//   if (err) {
+//   	console.log(err);
+//   	return;
+//   }
+//   console.log('Page created! Check out index.html in this directory to see it!');
+//   
+//   fs.copyFile('./src/style.css', './dist/style.css', err => {
+//   	if (err) {
+//   		console.log(err);
+//   		return;
+//   	}
+//   	console.log('Style sheet copied successfully!');
+//   });
 // });
+
+// Using mockData - replace with portfolioData
+promptUser()
+  .then(promptProject)
+  .then(portfolioData => {
+    return generatePage(mockData);
+  })
+  .then(pageHTML => {
+    return writeFile(pageHTML);
+  })
+  .then(writeFileResponse => {
+    console.log(writeFileResponse);
+    return copyFile();
+  })
+  .then(copyFileResponse => {
+    console.log(copyFileResponse);
+  })
+  .catch(err => {
+    console.log(err);
+  });
